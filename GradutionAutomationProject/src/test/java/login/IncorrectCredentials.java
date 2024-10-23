@@ -1,26 +1,25 @@
-package login;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 import pages.HomePage;
 
-public class IncorrectCredentials {
+public class IncorrectCredentials extends OpenWebsite {
     @Test
-    public static void main(String[] args) {
-        // Set up WebDriver
-        WebDriverManager.chromedriver().setup();
-        WebDriver driver = new ChromeDriver();
-        //Create an instance of HomePage with WebDriver
+    public void incorrectCredentials() {
         HomePage homePage=new HomePage(driver);
-        homePage.implicitWait();
-        // Open the website
-        homePage.openWebsite("https://automationexercise.com/");
         homePage.clickSignUpLogin();
         homePage.enterLoginInfo("project@tmail.ws","123444");
         homePage.clickLogin();
-        System.out.println(driver.findElement(By.cssSelector("#form > div > div > div.col-sm-4.col-sm-offset-1 > div > form > p")).getText());
-
-    }}
+        String expected = "Your email or password is incorrect!";
+        String actual = driver.findElement(By.cssSelector("#form > div > div > div.col-sm-4.col-sm-offset-1 > div > form > p")).getText();
+        Assert.assertEquals(actual,expected,"invalid test case");
+    }
+    @AfterTest
+    public void terminate(){
+        HomePage homePage=new HomePage(driver);
+        homePage.quit();
+    }
+}
